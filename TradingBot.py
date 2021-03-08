@@ -1,4 +1,7 @@
 import requests, json
+import pandas
+from alpha_vantage.timeseries import TimeSeries
+import sys 
 from config import *
 
 BASE_URL = "https://paper-api.alpaca.markets"
@@ -8,6 +11,10 @@ HEADERS = {'APCA-API-KEY-ID': API_KEY, 'APCA-API-SECRET-KEY': SECRET_KEY }
 
 def get_account():
     r =requests.get(ACCOUNT_URL, headers=HEADERS)
+    return json.loads(r.content)
+
+def get_stock_info(function, symbol, interval):
+    r=requests.get("https://www.alphavantage.co/query?function="+function+"&symbol="+symbol+"&interval="+interval+"&apikey="+VANTAGE_KEY)
     return json.loads(r.content)
 
 def create_order(symbol, qty, type, side, time_in_force):
@@ -21,5 +28,6 @@ def create_order(symbol, qty, type, side, time_in_force):
     r = requests.post(ORDERS_URL, json=data, headers=HEADERS)
     return json.loads(r.content)
 
-response=create_order("AAPL", 1, "market", "buy", "gtc")
+#response=create_order("AAPL", 1, "market", "buy", "gtc")
+response=get_stock_info('TIME_SERIES_DAILY_ADJUSTED','AAPL','5min')
 print(response)
