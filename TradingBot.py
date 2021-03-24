@@ -1,5 +1,6 @@
 from numpy.lib.histograms import _histogram_dispatcher
 import requests, json
+from alpha_vantage.timeseries import TimeSeries
 from config import *
 from alpha_vantage.timeseries import TimeSeries
 from alpha_vantage.techindicators import TechIndicators
