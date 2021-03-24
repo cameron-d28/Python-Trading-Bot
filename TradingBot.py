@@ -1,7 +1,5 @@
 import requests, json
-import pandas
 from alpha_vantage.timeseries import TimeSeries
-import sys 
 from config import *
 
 BASE_URL = "https://paper-api.alpaca.markets"
@@ -17,7 +15,7 @@ def get_stock_info(function, symbol, interval):
     r=requests.get("https://www.alphavantage.co/query?function="+function+"&symbol="+symbol+"&interval="+interval+"&apikey="+VANTAGE_KEY)
     return json.loads(r.content)
 
-def create_order(symbol, qty, type, side, time_in_force):
+def create_order(symbol, qty, type, side, time_in_force:
     data = {
         "symbol": symbol,
         "qty": qty,
@@ -30,4 +28,8 @@ def create_order(symbol, qty, type, side, time_in_force):
 
 #response=create_order("AAPL", 1, "market", "buy", "gtc")
 response=get_stock_info('TIME_SERIES_DAILY_ADJUSTED','AAPL','5min')
-print(response)
+for day in response["Time Series (Daily)"]:
+    print(response["Time Series (Daily)"][day]["2. high"])
+
+     
+#print(json.dumps(response, indent=4))
