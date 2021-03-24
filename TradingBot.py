@@ -45,7 +45,7 @@ def get_tech_indicator(symbol, interval, choice):
         data, meta = ti.get_vwap(symbol, interval, 20, 'close')
         d = [meta, data]
         return d
-    
+        
 def get_tech_val(symbol, interval, num, choice):
     vals = []
     d = get_tech_indicator(symbol, interval, choice)
@@ -72,9 +72,8 @@ def create_order(symbol, qty, type, side, time_in_force):
     return json.loads(r.content)
 
 def trade(indicator, symbol, default):
-    rsi = get_tech_val(symbol,'daily', 1, 'rsi')
-    print(rsi)
     if indicator == 'rsi':
+        rsi = get_tech_val(symbol,'daily', 1, 'rsi')
         if default:
             #sell if RSI above 80 (overbought) buy if RSI below 30 (oversold)
             if rsi >= 70:
@@ -97,6 +96,15 @@ def trade(indicator, symbol, default):
                 print(symbol + ' was oversold we bought 1 share')
             else:
                 print(symbol + ' was within range did not buy or sell')
+    # elif indicator == 'sma':
+    #     short_sma = get_tech_val(symbol, 'daily', 10, 'sma')
+    #     long_sma = get_tech_val(symbol, 'daily' 100, 'sma')
+    #     if 
+
+    # elif indicator == 'ema':
+
+    # elif indicator == 'vwap':
+
 
 
 #demo
