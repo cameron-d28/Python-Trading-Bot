@@ -1,17 +1,42 @@
-  
 {% extends "base.html" %}
 {% block head %}
 <title>Home</title>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 {% endblock %}
 
 {% block body %}
 
-<div class="text-center">
-  <img src="https://cdni.rt.com/files/2021.01/xxl/6016b93285f54046e775c25b.JPG" class="img-circle" width=250 height=150</img>
+<style type="text/css">
+.jumbotron{
+  background-image: url("https://clipartart.com/images/brain-emoji-clipart-11.jpg");
+  background-position: center;
+  color: black;
+}
+</style>
+
+<div class = "jumbotron text-center">
+  <h1> Welcome to the Brain</h1>
+  <p>Select an option below</p>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-4">
+      <h3>Preset Values</h3>
+      <p>All of our technical indicators that can trade with our preset values.</p>
+      <form>
+      <button type="submit" formaction="preset" class="btn btn-success">Easy Mode</button>
+      </form>
+    </div>
+    <div class="col-sm-4">
+      <h3>Manually-Set Values</h3>
+      <p>Have a better idea? Implement it here.</p>
+      <button type="button" class="btn btn-warning">You Better Know What Your Doing</button>
+    </div>
+    <div class="col-sm-4">
+      <h3>Self-Learning Beta</h3>        
+      <p>The big GUNS! Just let the computer do it for you ☺</p>
+      <button type="button" class="btn btn-danger">Just Close Your Eyes</button>
+    </div>
+  </div>
 </div>
 {% endblock %}
