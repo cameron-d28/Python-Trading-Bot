@@ -1,16 +1,23 @@
 from numpy.lib.histograms import _histogram_dispatcher
+from pandas._libs.tslibs import Timestamp
 import requests, json
 from alpha_vantage.timeseries import TimeSeries
-from config import *
+from config2 import *
 from alpha_vantage.timeseries import TimeSeries
 from alpha_vantage.techindicators import TechIndicators
 import pandas as pd
+import alpaca_trade_api as tradeapi
 import io
 
 BASE_URL = "https://paper-api.alpaca.markets"
 ACCOUNT_URL = "{}/v2/account".format(BASE_URL)
 ORDERS_URL = "{}/v2/orders".format(BASE_URL)
 HEADERS = {'APCA-API-KEY-ID': API_KEY, 'APCA-API-SECRET-KEY': SECRET_KEY }
+API = tradeapi.REST(
+        'PKF3D1XLH52F3N738TRN',
+        'kp2MNSS18DRt0jX9tlnZff7IBzamzlnbii8gAQJo',
+        'https://paper-api.alpaca.markets'
+        )
 
 ts = TimeSeries(VANTAGE_KEY, output_format='pandas')
 ti = TechIndicators(VANTAGE_KEY, output_format='pandas')
@@ -106,12 +113,34 @@ def trade(indicator, symbol, default):
 
     # elif indicator == 'vwap':
 
+def list_orders(): 
+    # Get the last 100 of our closed orders
+    closed_orders = API.list_orders(
+    status='closed',
+    limit=100,
+    nested=True  # show nested multi-leg orders
+    )
+
+    # Get the closed orders
+    closed_aapl_orders = [o for o in closed_orders]
+    
+    return closed_aapl_orders
+
+def get_order(ticker):
+    return API.get_order_by_client_order_id(ticker)
+
+orders = list_orders()
+# # print(z)
+for x in orders:
+  print(x.client_order_id)
+  print(get_order(x.client_order_id))
+print('\n')
 
 
 #demo
-response=get_stock_info('AAPL', '1min')
+#response=get_stock_info('AAPL', '1min')
 #response=get_tech_indicator('AAPL', 'daily', 'rsi')
 #response=get_tech_val('AAPL', 'daily', 10, 'rsi')
-print(response)
+#print(response)
 #trade('rsi', 'MSFT', True)
 
