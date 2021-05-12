@@ -1,32 +1,35 @@
-from config import *
-from numpy.lib.histograms import _histogram_dispatcher
-from pandas._libs.tslibs import Timestamp
+from flask import Flask, render_template, request, redirect, url_for, session
+from flask_mysqldb import MySQL
 import requests, json
 from alpha_vantage.timeseries import TimeSeries
+import sys
+from config import *
+import alpaca_trade_api as tradeapi
 from alpha_vantage.timeseries import TimeSeries
 from alpha_vantage.techindicators import TechIndicators
 import pandas as pd
-import alpaca_trade_api as tradeapi
 import yfinance as yf
+import numpy as np
 
 BASE_URL = "https://paper-api.alpaca.markets"
 ACCOUNT_URL = "{}/v2/account".format(BASE_URL)
 ORDERS_URL = "{}/v2/orders".format(BASE_URL)
 HEADERS = {'APCA-API-KEY-ID': API_KEY, 'APCA-API-SECRET-KEY': SECRET_KEY }
 
-ts = TimeSeries(VANTAGE_KEY, output_format='pandas')
-ti = TechIndicators(VANTAGE_KEY, output_format='pandas')
-
-#list all of our orders
-def list_orders(): 
-    api = tradeapi.REST(
+API = tradeapi.REST(
         'PKF3D1XLH52F3N738TRN',
         'kp2MNSS18DRt0jX9tlnZff7IBzamzlnbii8gAQJo',
         'https://paper-api.alpaca.markets'
         )
 
+ts = TimeSeries(VANTAGE_KEY, output_format='pandas')
+ti = TechIndicators(VANTAGE_KEY, output_format='pandas')
+
+#list all of our orders
+def list_orders(): 
+
     # Get the last 100 of our closed orders
-    closed_orders = api.list_orders(
+    closed_orders = API.list_orders(
     status='closed',
     limit=100,
     nested=True  # show nested multi-leg orders
@@ -61,7 +64,29 @@ def change_in_equity():
     balance_change = float(account.equity) - float(account.last_equity)
     return f'Today\'s portfolio balance change: ${round(balance_change,2)}'
 
+#get orders
+def get_orders(type_of_orders, mysql):
+    orders = []
+
+    cursor = mysql.connection.cursor()
+    query = 'SELECT ticker, id FROM CamEliMax_orders WHERE type=%s'
+    queryVars = (type_of_orders,)
+    cursor.execute(query, queryVars)
+    mysql.connection.commit()
+    results = cursor.fetchall()
+
+    for x in results:
+        if x['id'] == '':
+            orders.append([x['ticker'], 'N/A', 'N/A'])
+        else:
+            order = client_id(x['id'])
+            orders.append([order.symbol, order.filled_avg_price, order.filled_at])
+    
+    return orders
+
+#get order from clientid
+def client_id(id):
+    return API.get_order_by_client_order_id(id)
 
 # for index, row in df.iterrows():
 #     print(check_ticker(row['Symbol']))
-

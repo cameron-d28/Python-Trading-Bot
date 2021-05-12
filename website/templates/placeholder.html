@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block head %}
+<title>Home</title>
+{% endblock %}
+
+{% block body %}
+<div class="text-center">
+  <div class="jumbotron">
+    <h1 class="text-center">StockBot dashboard</h1>
+    <a href="https://alpaca.markets/" class="btn btn-info" role="button">Go to Alpacca Dashboard</a>
+    <h3>{{change}}</h3>
+  </div>
+</div>
+<div class="container">
+  <h2>Current Settings</h2>
+  <h3>Stock: {{ticker}}</h3>
+  <table class="table">
+    <thread>
+      <tr>
+        <th>Metric #1</th>
+        <th>Metric #2</th>
+        <th>Metric #3</th>
+      </tr>
+    </thread>
+    <tbody>
+      <tr>
+        <td>{{M1}}</td>
+        <td>{{M2}}</td>
+        <td>{{M3}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<form method="POST", class="form-inline" action="edit">
+  <div class="form-group">
+    <label class="sr-only" for="pwd">Enter password to edit criteria:</label>
+    <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pwd">
+    <input type="submit" value="Continue to editting" />
+  </div>
+</form>
+<p class="text-danger">{{error}}<p>
+{% endblock %}

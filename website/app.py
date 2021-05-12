@@ -8,7 +8,7 @@ import alpaca_trade_api as tradeapi
 from alpha_vantage.timeseries import TimeSeries
 from alpha_vantage.techindicators import TechIndicators
 import pandas as pd
-from methods import list_orders, check_ticker, change_in_equity
+from methods import list_orders, check_ticker, change_in_equity, get_orders
 
 #database access
 app = Flask(__name__)
@@ -19,7 +19,7 @@ app.config['MYSQL_DB'] = '2021project'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 #secret Key
 app.config['SECRET_KEY'] = 'gshdnfjaebkashgdfhjkageads'
-mysql = MySQL(app)
+MYSQL = MySQL(app)
 
 BASE_URL = "https://paper-api.alpaca.markets"
 ACCOUNT_URL = "{}/v2/account".format(BASE_URL)
@@ -51,9 +51,9 @@ def create_order(symbol, qty, type, side, time_in_force):
 
 @app.route("/")
 def index():
-    return render_template('home.html', change=change_in_equity(), ticker='AAPL', M1='SMA', M2='EMA', M3='RIS')
+    return render_template('index.html', change=change_in_equity(), ticker='AAPL', M1='SMA', M2='EMA', M3='RIS')
 
-@app.route("/edit", methods=['POST', 'GET'])
+@app.route("/home", methods=['POST', 'GET'])
 def edit():
     if request.values.get('pwd')=='Camelimax123':
         return render_template('edit.html', change=change_in_equity())
@@ -62,8 +62,10 @@ def edit():
 
 @app.route("/preset_vals", methods=['POST', 'GET'])
 def preset():
+    orders = get_orders('preset', MYSQL)
+
     if request.method == 'GET':
-        return render_template('preset.html', orders = list_orders())
+        return render_template('preset.html', orders = orders)
     else:
         ticker=request.form.get('ticker')
         type=request.form.get('type')
@@ -71,45 +73,51 @@ def preset():
         tech_ind=request.form.get('tech_ind')
 
         if check_ticker(ticker) == False:
-            return render_template('preset.html', orders = list_orders(), reload=True, error='ticker')
+            return render_template('preset.html', orders = orders, reload=True, error='ticker')
         elif qty > 10: 
-            return render_template('preset.html', orders = list_orders(), reload=True, error='qty')
+            return render_template('preset.html', orders = orders, reload=True, error='qty')
         else:
-            cursor = mysql.connection.cursor()
+            cursor = MYSQL.connection.cursor()
             #INSERT stock information into database
             query = "INSERT INTO CamEliMax_orders (ticker, type, qty, tech_indicator) VALUES (%s, %s, %s, %s)"
             queryVars = (ticker, type, qty, tech_ind)
             cursor.execute(query, queryVars)
-            mysql.connection.commit()
-            return render_template('preset.html', orders = list_orders(), reload=True, error='none')
+            MYSQL.connection.commit()
+            return render_template('preset.html', orders = orders, reload=True, error='none')
 
-@app.route("/manual_vals")
+@app.route("/manual_vals", methods=['POST', 'GET'])
 def manual():
-    return render_template('manual.html')    
+    orders = get_orders('manual', MYSQL)
+
+    if request.method == 'GET':
+        return render_template('manual.html', orders = orders)
+    else:
+        ticker=request.form.get('ticker')
+        type=request.form.get('type')
+        qty=int(request.form.get('qty'))
+        tech_ind=request.form.get('tech_ind')
+        high=request.form.get('high')
+        low=request.form.get('low')
+
+        if check_ticker(ticker) == False:
+            return render_template('manual.html', orders = orders, reload=True, error='ticker')
+        elif qty > 10: 
+            return render_template('manual.html', orders = orders, reload=True, error='qty')
+        else:
+            cursor = MYSQL.connection.cursor()
+            #INSERT stock information into database
+            query = "INSERT INTO CamEliMax_orders (ticker, type, qty, tech_indicator) VALUES (%s, %s, %s, %s)"
+            queryVars = (ticker, type, qty, tech_ind)
+            cursor.execute(query, queryVars)
+            MYSQL.connection.commit()
+            return render_template('manual.html', orders = orders, reload=True, error='none')   
 
 @app.route('/test', methods=['POST', 'GET'])
 def test():
-    if request.method == 'GET':
-        return render_template('test.html', orders = list_orders())
-    else:
-        ticker=request.form.get('ticker')
-        type=request.form.get('type')
-        qty=int(request.form.get('qty'))
-        tech_ind=request.form.get('tech_ind')
+    orders =  get_orders('preset', MYSQL)
+    #need to organize orders to input
+    return render_template('test.html', orders = orders, reload=True, error='none')
 
-        if check_ticker(ticker) == False:
-            return render_template('test.html', orders = list_orders(), reload=True, error='ticker')
-        elif qty > 10: 
-            return render_template('test.html', orders = list_orders(), reload=True, error='qty')
-        else:
-            cursor = mysql.connection.cursor()
-            #INSERT stock information into database
-            query = "INSERT INTO CamEliMax_orders (ticker, type, qty, tech_indicator) VALUES (%s, %s, %s, %s)"
-            queryVars = (ticker, type, qty, tech_ind)
-            cursor.execute(query, queryVars)
-            mysql.connection.commit()
-            return render_template('test.html', orders = list_orders(), reload=True, error='none')
-        
 
 
         

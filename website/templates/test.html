@@ -22,12 +22,13 @@
         <tbody>
             {% for x in orders %}
             <tr>
-            <td>{{x.symbol}}</td>
-            <td>{{x.filled_avg_price}}</td>
-            <td>{{x.filled_at}}</td>
+            <td>{{x[0]}}</td>
+            <td>{{x[1]}}</td>
+            <td>{{x[2]}}</td>
             </tr>
             {% endfor %}
-    
+            
+            {{orders}}
         </tbody>
         </table>
     </div>
