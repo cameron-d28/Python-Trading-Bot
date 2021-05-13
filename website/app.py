@@ -112,6 +112,21 @@ def manual():
             MYSQL.connection.commit()
             return render_template('manual.html', orders = orders, reload=True, error='none')   
 
+@app.route("/ai", methods=['POST', 'GET'])
+def ai():
+    orders = get_orders('ai', MYSQL)
+    if request.method == 'GET':
+        return render_template('ai.html', orders = orders)
+    else:
+        ticker=request.form.get('ticker')
+        # tech_inde=would have to check if each tech ind is true or not
+        percent_threshold=request.form.get('percent_threshold')
+
+        if check_ticker(ticker) == False:
+            return render_template('ai.html', orders = orders, reload=True, error='ticker')
+        else: 
+            return render_template('ai.html', orders = orders, reload=True, error='none')
+
 @app.route('/test', methods=['POST', 'GET'])
 def test():
     orders =  get_orders('preset', MYSQL)
