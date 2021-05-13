@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block head %}
+<title>Home</title>
+{% endblock %}
+
+{% block body %}
+
+<style type="text/css">
+.container {
+  width: auto;
+  height: 504px;
+  overflow: hidden;
+}
+
+.jumbotron{
+  /* url('../../website/static/brain.jpg') https://clipartart.com/images/brain-emoji-clipart-11.jpg  */
+  background-image: url('https://static.wixstatic.com/media/263c45_fb00b97edf184e0e92f956b559f2f73e.png/v1/fill/w_578,h_504,al_c,q_85,usm_0.66_1.00_0.01/263c45_fb00b97edf184e0e92f956b559f2f73e.webp');
+  width: 10000px;
+  height: 504px;
+  background-position: center;
+  animation: slide 10s linear infinite;
+  color: black;
+  background-color: lightblue;
+  mix-blend-mode: multiply;
+}
+
+@keyframes slide{
+  0%{
+    transform: translate3d(0, 0, 0);
+  }
+  100%{
+    transform: translate3d(-580px, 0, 0);
+  }
+}
+</style>
+<div class=container>
+  <div class = "jumbotron">
+    <!-- <h1> Welcome to the Brain</h1>
+    <h2> {{change}}</h2>
+    <p>Select an option below</p> -->
+   </div>
+  
+</div>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-4">
+      <h3>Preset Values</h3>
+      <p>All of our technical indicators that can trade with our preset values.</p>
+      <form>
+        <button class="btn btn-success" type="submit" formaction="preset_vals">Easy Mode</button>
+      </form>
+    </div>
+    <div class="col-sm-4">
+      <h3>Manually-Set Values</h3>
+      <p>Have a better idea? Implement it here.</p>
+      <form>
+        <button class="btn btn-warning" type="submit" formaction="manual_vals" >You Better Know What Your Doing</button>
+      </form>
+      
+    </div>
+    <div class="col-sm-4">
+      <h3>Self-Learning Beta</h3>        
+      <p>The big GUNS! Just let the computer do it for you ☺</p>
+      <button type="button" class="btn btn-danger">Just Close Your Eyes</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
