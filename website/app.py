@@ -112,11 +112,6 @@ def manual():
             MYSQL.connection.commit()
             return render_template('manual.html', orders = orders, reload=True, error='none')   
 
-<<<<<<< HEAD
-@app.route("/ai", methods=['POST', 'GET']) 
-def ai():
-    orders = get_orders('ai', MYSQL)
-=======
 @app.route("/ai", methods=['POST', 'GET'])
 def ai():
     orders = get_orders('ai', MYSQL)
@@ -130,17 +125,13 @@ def ai():
     bol_bands=request.form.get('bol_bands')
     avg_dir_movement=request.form.get('avg_dir_movement')
 
->>>>>>> 529eaa89ea804c6c85079329889d16bb56506ed3
     if request.method == 'GET':
         return render_template('ai.html', orders = orders)
     else:
         ticker=request.form.get('ticker')
-<<<<<<< HEAD
         type=request.form.get('type')
         qty=int(request.form.get('qty'))
         tech_ind=request.form.get('tech_ind')
-=======
->>>>>>> 529eaa89ea804c6c85079329889d16bb56506ed3
         # tech_inde=would have to check if each tech ind is true or not
         percent_threshold=request.form.get('percent_threshold')
 
@@ -149,10 +140,6 @@ def ai():
         else: 
             return render_template('ai.html', orders = orders, reload=True, error='none')
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 529eaa89ea804c6c85079329889d16bb56506ed3
 @app.route('/test', methods=['POST', 'GET'])
 def test():
     orders =  get_orders('preset', MYSQL)
