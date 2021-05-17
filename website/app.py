@@ -116,7 +116,6 @@ def manual():
 def ai():
     orders = get_orders('ai', MYSQL)
 
-    #test
     rsi=request.form.get('rsi')
     vol=request.form.get('vol')
     stoch_osc=request.form.get('stoch_osc')
