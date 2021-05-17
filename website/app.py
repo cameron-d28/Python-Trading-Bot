@@ -115,17 +115,24 @@ def manual():
 @app.route("/ai", methods=['POST', 'GET'])
 def ai():
     orders = get_orders('ai', MYSQL)
+    tech_ind_used=[]
 
-    rsi=request.form.get('rsi')
-    vol=request.form.get('vol')
-    stoch_osc=request.form.get('stoch_osc')
-    sma=request.form.get('sma')
-    on_balance_vol=request.form.get('on_balance_vol')
-    mov_avg_con=request.form.get('moving_avg_con')
-    bol_bands=request.form.get('bol_bands')
-    avg_dir_movement=request.form.get('avg_dir_movement')
-
-
+    if request.form.get('rsi')==True:
+        tech_ind_used.append('rsi')
+    if request.form.get('vol')==True:
+        tech_ind_used.append('vol')
+    if request.form.get('stoch_osc')==True:
+        tech_ind_used.append('stoch-osc')
+    if request.form.get('sma')==True:
+        tech_ind_used.append('sma')
+    if request.form.get('on_balance_vol')==True:
+        tech_ind_used.append('on_balance_vol')
+    if request.form.get('moving_avg_con')==True:
+        tech_ind_used.append('moving_avg_con')
+    if request.form.get('bol_bands')==True:
+        tech_ind_used.append('bol_bands')
+    if request.form.get('avg_dir_movement')==True:
+        tech_ind_used.append('avg_dir_movement')
 
     if request.method == 'GET':
         return render_template('ai.html', orders = orders)
