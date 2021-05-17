@@ -36,9 +36,15 @@
 <form method="POST" action="ai">
   <!-- tells mySQL it is a stock traded with artificial inteligence values -->
   <input type="hidden" name="type" value="ai">
+<<<<<<< HEAD
   <div class="form-group col-md-6">
     <div class="checkbox">
       <label><input type="checkbox" name="rsi"> <a href="https://www.investopedia.com/terms/r/rsi.asp" target="_blank">Relative Strength Index</a></label></br> 
+=======
+  <div class="form-group col-md-3">
+    <div class="checkbox">
+      <label><input type="checkbox" name="rsi"> Relative Strength Index</label></br>
+>>>>>>> 529eaa89ea804c6c85079329889d16bb56506ed3
       <label><input type="checkbox" name="vol"> Volume</label></br>
       <label><input type="checkbox" name="stoch_osc"> Stochastic Oscillator</label></br>
       <label><input type="checkbox" name="sma"> Simple Moving Average</label></br>
@@ -46,6 +52,7 @@
       <label><input type="checkbox" name="moving_avg_con"> Moving Average Convergence/Divergence</label></br>
       <label><input type="checkbox" name="bol_bands"> Bollinger Bands</label></br>
       <label><input type="checkbox" name="avg_dir_movement"> Average Directional Movement</label></br>
+<<<<<<< HEAD
     </div>
   </div>
   <div class="form-group col-md-3">
@@ -98,6 +105,54 @@
   {% endif %}
     
 
+=======
+      <input type="text" class="form-control" name="ticker" placeholder="Enter Stock Ticker" required><br/>
+      <input type="text" pattern="\d+" class="form-control" name="percentage" placeholder="Enter percentage threshold" required><br/>
+      <button type="submit" class="btn btn-success">Buy!Buy!Buy!</button>
+    </div>
+</form>
+
+{% if reload %}
+        <!-- Pop Up -->
+        <div class="modal fade" tabindex="-1" role="dialog" id="information">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            {% if error == 'none' %}
+                            {{ticker}} order submitted
+                            {% else %}
+                            Sorry :( There is a probel with your inputs)
+                            {% endif %}
+                            </h5>
+                        <button type="button" class="close" data-dismiss="modal" id="closer">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            {% if error == 'ticker' %}
+                            You have input an invalid Ticker
+                            {% elif error == 'qty' %}
+                            We have limited max quantity to 10
+                            {% else %}
+                            As soon as the order is filled, it will be added to the portfolio.
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" id="closer">
+                            {% if error != 'none' %}
+                            Try Again!
+                            {% else %}
+                            Thanks
+                            {% endif %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    
+>>>>>>> 529eaa89ea804c6c85079329889d16bb56506ed3
 <script>
     $(document).ready(function(){
         $("#information").modal("show");
@@ -107,6 +162,11 @@
         });
     });
 </script>
+<<<<<<< HEAD
 
 
 {% endblock %}
+=======
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+{% endblock %}
+>>>>>>> 529eaa89ea804c6c85079329889d16bb56506ed3
