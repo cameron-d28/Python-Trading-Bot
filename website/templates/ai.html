@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.html" %} 
 {% block head %}
 <title>Self-Learning Bot</title>
 {% endblock %}
@@ -6,7 +6,107 @@
 {% block body %}
 <div class="container">
   <div class="jumbotron">
-    <h1 class="text-center">information to come</h1>
+    <h1 class="text-center">Artificial Inteligence Values Portfolio</h1>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+<div>
+  <table class="table table-dark">
+    <thead>
+      <tr>
+        <th scope="col"> Stock Ticker </th>
+        <th scope="col"> Cost </th>
+        <th scope="col"> Purchase Date </th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for x in orders %}
+        <tr>
+        <td>{{x[0]}}</td>
+        <td>{{x[1]}}</td>
+        <td>{{x[2]}}</td>
+        </tr>
+        {% endfor %}
+
+    </tbody>
+  </table>
+</div>
+
+<h3>Choose which indicators StockBot will analyze when buying and selling stocks.</h3>
+
+<form method="POST" action="ai">
+  <!-- tells mySQL it is a stock traded with artificial inteligence values -->
+  <input type="hidden" name="type" value="ai">
+  <div class="form-group col-md-6">
+    <div class="checkbox">
+      <label><input type="checkbox" name="rsi"> <a href="https://www.investopedia.com/terms/r/rsi.asp" target="_blank">Relative Strength Index</a></label></br> 
+      <label><input type="checkbox" name="vol"> Volume</label></br>
+      <label><input type="checkbox" name="stoch_osc"> Stochastic Oscillator</label></br>
+      <label><input type="checkbox" name="sma"> Simple Moving Average</label></br>
+      <label><input type="checkbox" name="on_balance_vol"> On Balance Volume</label></br>
+      <label><input type="checkbox" name="moving_avg_con"> Moving Average Convergence/Divergence</label></br>
+      <label><input type="checkbox" name="bol_bands"> Bollinger Bands</label></br>
+      <label><input type="checkbox" name="avg_dir_movement"> Average Directional Movement</label></br>
+    </div>
+  </div>
+  <div class="form-group col-md-3">
+    <input type="text" class="form-control" name="ticker" placeholder="Enter Stock Ticker" required><br/>
+      <input type="text" pattern="\d+" class="form-control" name="percentage" placeholder="Enter percentage threshold" required><br/>
+  </div> 
+  <div class="form-group col-md-3">
+    <button type="submit" class="btn btn-success">Buy!Buy!Buy!</button>
+  </div>
+</form>
+
+{% if reload %}
+  <!-- Pop Up -->
+  <div class="modal fade" tabindex="-1" role="dialog" id="information">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            {% if error == 'none' %}
+            {{ticker}} order submitted
+            {% else %}
+            Sorry :( There is a probel with your inputs)
+            {% endif %}
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" id="closer">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>
+            {% if error == 'ticker' %}
+            You have input an invalid Ticker
+            {% elif error == 'qty' %}
+            We have limited max quantity to 10
+            {% else %}
+            As soon as the order is filled, it will be added to the portfolio.
+            {% endif %}
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" id="closer">
+            {% if error != 'none' %}
+            Try Again!
+            {% else %}
+            Thanks
+            {% endif %}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+    
+
+<script>
+    $(document).ready(function(){
+        $("#information").modal("show");
+        
+        $("#closer").click(function(){
+            $("#information").modal("hide");
+        });
+    });
+</script>
+
+
 {% endblock %}
