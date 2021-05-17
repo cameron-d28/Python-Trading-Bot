@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.html" %} 
 {% block head %}
 <title>Self-Learning Bot</title>
 {% endblock %}
@@ -46,6 +46,58 @@
       <label><input type="checkbox" name="moving_avg_con"> <a href="https://www.investopedia.com/terms/m/macd.asp">Moving Average Convergence/Divergence</a></label></br>
       <label><input type="checkbox" name="bol_bands"> <a href="https://www.investopedia.com/terms/b/bollingerbands.asp">Bollinger Bands</a></label></br>
       <label><input type="checkbox" name="avg_dir_movement"> <a href="https://www.investopedia.com/terms/a/adx.asp">Average Directional Movement</a></label></br>
+    </div>
+  </div>
+  <div class="form-group col-md-3">
+    <input type="text" class="form-control" name="ticker" placeholder="Enter Stock Ticker" required><br/>
+      <input type="text" pattern="\d+" class="form-control" name="percentage" placeholder="Enter percentage threshold" required><br/>
+  </div> 
+  <div class="form-group col-md-3">
+    <button type="submit" class="btn btn-success">Buy!Buy!Buy!</button>
+  </div>
+</form>
+
+{% if reload %}
+  <!-- Pop Up -->
+  <div class="modal fade" tabindex="-1" role="dialog" id="information">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            {% if error == 'none' %}
+            {{ticker}} order submitted
+            {% else %}
+            Sorry :( There is a probel with your inputs)
+            {% endif %}
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" id="closer">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>
+            {% if error == 'ticker' %}
+            You have input an invalid Ticker
+            {% elif error == 'qty' %}
+            We have limited max quantity to 10
+            {% else %}
+            As soon as the order is filled, it will be added to the portfolio.
+            {% endif %}
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" id="closer">
+            {% if error != 'none' %}
+            Try Again!
+            {% else %}
+            Thanks
+            {% endif %}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+    
+
       <input type="text" class="form-control" name="ticker" placeholder="Enter Stock Ticker" required><br/>
       <input type="text" pattern="\d+" class="form-control" name="percentage" placeholder="Enter percentage threshold" required><br/>
       <button type="submit" class="btn btn-success">Buy!Buy!Buy!</button>

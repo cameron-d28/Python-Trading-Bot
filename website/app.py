@@ -125,6 +125,8 @@ def ai():
     bol_bands=request.form.get('bol_bands')
     avg_dir_movement=request.form.get('avg_dir_movement')
 
+
+
     if request.method == 'GET':
         return render_template('ai.html', orders = orders)
     else:
