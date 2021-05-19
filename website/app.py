@@ -160,6 +160,10 @@ def ai():
             MYSQL.connection.commit()
             return render_template('ai.html', orders = orders, reload=True, error='none', tech=tech_ind_used)
 
+@app.route('/trades', methods=['POST', 'GET'])
+def trade():
+    return render_template('trade.html')
+
 @app.route('/test', methods=['POST', 'GET'])
 def test():
     orders =  get_orders('preset', MYSQL)
