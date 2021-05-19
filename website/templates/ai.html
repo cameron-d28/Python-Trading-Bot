@@ -38,14 +38,14 @@
   <input type="hidden" name="type" value="ai">
   <div class="form-group col-md-3">
     <div class="checkbox">
-      <label><input type="checkbox" name="rsi"> <a href="https://www.investopedia.com/terms/r/rsi.asp">Relative Strength Index</a></label></br>
-      <label><input type="checkbox" name="vol"> <a href="https://www.investopedia.com/terms/v/volume.asp#:~:text=What%20Is%20Volume%3F,its%20daily%20open%20and%20close.">Volume</a></label></br>
-      <label><input type="checkbox" name="stoch_osc"> <a href="https://www.investopedia.com/terms/s/stochasticoscillator.asp">Stochastic Oscillator</a></label></br>
-      <label><input type="checkbox" name="sma"> <a href="https://www.investopedia.com/terms/s/sma.asp#:~:text=A%20simple%20moving%20average%20(SMA)%20is%20an%20arithmetic%20moving%20average,periods%20in%20the%20calculation%20average.">Simple Moving Average</a></label></br>
-      <label><input type="checkbox" name="on_balance_vol"> <a href="https://www.investopedia.com/terms/o/onbalancevolume.asp">On Balance Volume</a></label></br>
-      <label><input type="checkbox" name="moving_avg_con"> <a href="https://www.investopedia.com/terms/m/macd.asp">Moving Average Convergence/Divergence</a></label></br>
-      <label><input type="checkbox" name="bol_bands"> <a href="https://www.investopedia.com/terms/b/bollingerbands.asp">Bollinger Bands</a></label></br>
-      <label><input type="checkbox" name="avg_dir_movement"> <a href="https://www.investopedia.com/terms/a/adx.asp">Average Directional Movement</a></label></br>
+      <label><input type="checkbox" name="rsi"> <a href="https://www.investopedia.com/terms/r/rsi.asp" target="_blank">Relative Strength Index</a></label></br>
+      <label><input type="checkbox" name="vol"> <a href="https://www.investopedia.com/terms/v/volume.asp#:~:text=What%20Is%20Volume%3F,its%20daily%20open%20and%20close." target="_blank">Volume</a></label></br>
+      <label><input type="checkbox" name="stoch_osc"> <a href="https://www.investopedia.com/terms/s/stochasticoscillator.asp" target="_blank">Stochastic Oscillator</a></label></br>
+      <label><input type="checkbox" name="sma"> <a href="https://www.investopedia.com/terms/s/sma.asp#:~:text=A%20simple%20moving%20average%20(SMA)%20is%20an%20arithmetic%20moving%20average,periods%20in%20the%20calculation%20average." target="_blank">Simple Moving Average</a></label></br>
+      <label><input type="checkbox" name="on_balance_vol"> <a href="https://www.investopedia.com/terms/o/onbalancevolume.asp" target="_blank">On Balance Volume</a></label></br>
+      <label><input type="checkbox" name="moving_avg_con"> <a href="https://www.investopedia.com/terms/m/macd.asp" target="_blank">Moving Average Convergence/Divergence</a></label></br>
+      <label><input type="checkbox" name="bol_bands"> <a href="https://www.investopedia.com/terms/b/bollingerbands.asp" target="_blank">Bollinger Bands</a></label></br>
+      <label><input type="checkbox" name="avg_dir_movement"> <a href="https://www.investopedia.com/terms/a/adx.asp" target="_blank">Average Directional Movement</a></label></br>
     </div>
   </div>
   <div class="form-group col-md-3">
@@ -96,53 +96,7 @@
     </div>
   </div>
   {% endif %}
-    
 
-      <input type="text" class="form-control" name="ticker" placeholder="Enter Stock Ticker" required><br/>
-      <input type="text" pattern="\d+" class="form-control" name="percentage" placeholder="Enter percentage threshold" required><br/>
-      <button type="submit" class="btn btn-success">Buy!Buy!Buy!</button>
-    </div>
-</form>
-
-{% if reload %}
-        <!-- Pop Up -->
-        <div class="modal fade" tabindex="-1" role="dialog" id="information">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">
-                            {% if error == 'none' %}
-                            {{ticker}} order submitted
-                            {% else %}
-                            Sorry :( There is a probel with your inputs)
-                            {% endif %}
-                            </h5>
-                        <button type="button" class="close" data-dismiss="modal" id="closer">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <p>
-                            {% if error == 'ticker' %}
-                            You have input an invalid Ticker
-                            {% elif error == 'qty' %}
-                            We have limited max quantity to 10
-                            {% else %}
-                            As soon as the order is filled, it will be added to the portfolio.
-                            {% endif %}
-                        </p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" id="closer">
-                            {% if error != 'none' %}
-                            Try Again!
-                            {% else %}
-                            Thanks
-                            {% endif %}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {% endif %}
     
 <script>
     $(document).ready(function(){
