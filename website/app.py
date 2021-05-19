@@ -119,30 +119,30 @@ def ai():
     if request.method == 'GET':
         return render_template('ai.html', orders = orders)
     else:
-        tech_ind_used=[]
+        tech_ind_used=""
 
         if request.form.get('rsi')==True:
-            tech_ind_used.append('rsi')
+            tech_ind_used+='rsi, '
         if request.form.get('vol')==True:
-            tech_ind_used.append('vol')
+            tech_ind_used+='vol, '
         if request.form.get('stoch_osc')==True:
-            tech_ind_used.append('stoch-osc')
+            tech_ind_used+='stoch_osc, '
         if request.form.get('sma')==True:
-            tech_ind_used.append('sma')
+            tech_ind_used+='sma, '
         if request.form.get('on_balance_vol')==True:
-            tech_ind_used.append('on_balance_vol')
+            tech_ind_used+='on_balance_vol, '
         if request.form.get('moving_avg_con')==True:
-            tech_ind_used.append('moving_avg_con')
+            tech_ind_used+='MACD, '
         if request.form.get('bol_bands')==True:
-            tech_ind_used.append('bol_bands')
+            tech_ind_used+='bol_bands, '
         if request.form.get('avg_dir_movement')==True:
-            tech_ind_used.append('avg_dir_movement')
+            tech_ind_used+='avg_dir_movement, '
         
         ticker=request.form.get('ticker')
         type=request.form.get('type')
-        qty=int(request.form.get('qty'))
+        qty=int(request.form.get('qty')) 
         # tech_inde=would have to check if each tech ind is true or not
-        percent_threshold=int(request.form.get('percent_threshold'))
+        percent_threshold=int(request.form.get('percentage'))
 
         if check_ticker(ticker) == False:
             return render_template('ai.html', orders = orders, reload=True, error='ticker')
@@ -155,10 +155,10 @@ def ai():
             #INSERT stock information into database
             query = "INSERT INTO CamEliMax_orders (ticker, type, qty, tech_indicator) VALUES (%s, %s, %s, %s)"
             #We want to put tech_ind_used in a text mySQL column
-            queryVars = (ticker, type, qty, tech_ind_used)
+            queryVars = (ticker, type, 1, tech_ind_used)
             cursor.execute(query, queryVars)
             MYSQL.connection.commit()
-            return render_template('ai.html', orders = orders, reload=True, error='none')
+            return render_template('ai.html', orders = orders, reload=True, error='none', tech=tech_ind_used)
 
 @app.route('/test', methods=['POST', 'GET'])
 def test():
