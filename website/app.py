@@ -115,35 +115,49 @@ def manual():
 @app.route("/ai", methods=['POST', 'GET'])
 def ai():
     orders = get_orders('ai', MYSQL)
-    tech_ind_used=[]
-
-    if request.form.get('rsi')==True:
-        tech_ind_used.append('rsi')
-    if request.form.get('vol')==True:
-        tech_ind_used.append('vol')
-    if request.form.get('stoch_osc')==True:
-        tech_ind_used.append('stoch-osc')
-    if request.form.get('sma')==True:
-        tech_ind_used.append('sma')
-    if request.form.get('on_balance_vol')==True:
-        tech_ind_used.append('on_balance_vol')
-    if request.form.get('moving_avg_con')==True:
-        tech_ind_used.append('moving_avg_con')
-    if request.form.get('bol_bands')==True:
-        tech_ind_used.append('bol_bands')
-    if request.form.get('avg_dir_movement')==True:
-        tech_ind_used.append('avg_dir_movement')
 
     if request.method == 'GET':
         return render_template('ai.html', orders = orders)
     else:
+        tech_ind_used=[]
+
+        if request.form.get('rsi')==True:
+            tech_ind_used.append('rsi')
+        if request.form.get('vol')==True:
+            tech_ind_used.append('vol')
+        if request.form.get('stoch_osc')==True:
+            tech_ind_used.append('stoch-osc')
+        if request.form.get('sma')==True:
+            tech_ind_used.append('sma')
+        if request.form.get('on_balance_vol')==True:
+            tech_ind_used.append('on_balance_vol')
+        if request.form.get('moving_avg_con')==True:
+            tech_ind_used.append('moving_avg_con')
+        if request.form.get('bol_bands')==True:
+            tech_ind_used.append('bol_bands')
+        if request.form.get('avg_dir_movement')==True:
+            tech_ind_used.append('avg_dir_movement')
+        
         ticker=request.form.get('ticker')
+        type=request.form.get('type')
+        qty=int(request.form.get('qty'))
         # tech_inde=would have to check if each tech ind is true or not
-        percent_threshold=request.form.get('percent_threshold')
+        percent_threshold=int(request.form.get('percent_threshold'))
 
         if check_ticker(ticker) == False:
             return render_template('ai.html', orders = orders, reload=True, error='ticker')
-        else: 
+        elif qty > 10: 
+            return render_template('manual.html', orders = orders, reload=True, error='qty')
+        elif percent_threshold < 0 or percent_threshold > 5: 
+            return render_template('ai.html', orders = orders, reload=True, error='percent_threshold')
+        else:
+            cursor = MYSQL.connection.cursor()
+            #INSERT stock information into database
+            query = "INSERT INTO CamEliMax_orders (ticker, type, qty, tech_indicator) VALUES (%s, %s, %s, %s)"
+            #We want to put tech_ind_used in a text mySQL column
+            queryVars = (ticker, type, qty, tech_ind_used)
+            cursor.execute(query, queryVars)
+            MYSQL.connection.commit()
             return render_template('ai.html', orders = orders, reload=True, error='none')
 
 @app.route('/test', methods=['POST', 'GET'])
