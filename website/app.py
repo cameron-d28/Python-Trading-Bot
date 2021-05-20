@@ -120,22 +120,21 @@ def ai():
         return render_template('ai.html', orders = orders)
     else:
         tech_ind_used=""
-
-        if request.form.get('rsi')==True:
+        if str(request.form.get('rsi'))=='on':
             tech_ind_used+='rsi, '
-        if request.form.get('vol')==True:
+        if str(request.form.get('vol'))=='on':
             tech_ind_used+='vol, '
-        if request.form.get('stoch_osc')==True:
+        if str(request.form.get('stoch_osc'))=='on':
             tech_ind_used+='stoch_osc, '
-        if request.form.get('sma')==True:
+        if str(request.form.get('sma'))=='on':
             tech_ind_used+='sma, '
-        if request.form.get('on_balance_vol')==True:
+        if str(request.form.get('on_balance_vol'))=='on':
             tech_ind_used+='on_balance_vol, '
-        if request.form.get('moving_avg_con')==True:
+        if str(request.form.get('moving_avg_con'))=='on':
             tech_ind_used+='MACD, '
-        if request.form.get('bol_bands')==True:
+        if str(request.form.get('bol_bands'))=='on':
             tech_ind_used+='bol_bands, '
-        if request.form.get('avg_dir_movement')==True:
+        if str(request.form.get('avg_dir_movement'))=='on':
             tech_ind_used+='avg_dir_movement, '
         
         ticker=request.form.get('ticker')
@@ -158,7 +157,7 @@ def ai():
             queryVars = (ticker, type, 1, tech_ind_used)
             cursor.execute(query, queryVars)
             MYSQL.connection.commit()
-            return render_template('ai.html', orders = orders, reload=True, error='none', tech=tech_ind_used)
+            return render_template('ai.html', orders = orders, reload=True, error='none')
 
 @app.route('/trades', methods=['POST', 'GET'])
 def trade():
