@@ -40,29 +40,9 @@ def list_orders():
     
     return closed_aapl_orders
 
-#checks to see if ticker is valid
-def check_ticker(ticker):
-    ticker= yf.Ticker(ticker.upper())
-    try:
-        ticker.info['symbol']
-        return True
-    except:
-        return False
-
-
-#finds our daily profits and loss
-def change_in_equity():
-    # First, open the API connection
-    api = tradeapi.REST(
-        'PKF3D1XLH52F3N738TRN',
-        'kp2MNSS18DRt0jX9tlnZff7IBzamzlnbii8gAQJo',
-        'https://paper-api.alpaca.markets'
-        )
-    # Get account info
-    account = api.get_account()
-    # Check our current balance vs. our balance at the last market close
-    balance_change = float(account.equity) - float(account.last_equity)
-    return f'Today\'s portfolio balance change: ${round(balance_change,2)}'
+#get order from clientid
+def client_id(id):
+    return API.get_order_by_client_order_id(id)
 
 #get orders
 def get_orders(type_of_orders, mysql):
@@ -84,9 +64,29 @@ def get_orders(type_of_orders, mysql):
     
     return orders
 
-#get order from clientid
-def client_id(id):
-    return API.get_order_by_client_order_id(id)
+#checks to see if ticker is valid
+def check_ticker(ticker):
+    ticker= yf.Ticker(ticker.upper())
+    try:
+        ticker.info['symbol']
+        return True
+    except:
+        return False
+
+#finds our daily profits and loss
+def change_in_equity():
+    # First, open the API connection
+    api = tradeapi.REST(
+        'PKF3D1XLH52F3N738TRN',
+        'kp2MNSS18DRt0jX9tlnZff7IBzamzlnbii8gAQJo',
+        'https://paper-api.alpaca.markets'
+        )
+    # Get account info
+    account = api.get_account()
+    # Check our current balance vs. our balance at the last market close
+    balance_change = float(account.equity) - float(account.last_equity)
+    return f'Today\'s portfolio balance change: ${round(balance_change,2)}'
+
 
 # for index, row in df.iterrows():
 #     print(check_ticker(row['Symbol']))

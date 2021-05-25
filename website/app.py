@@ -147,14 +147,14 @@ def ai():
             return render_template('ai.html', orders = orders, reload=True, error='ticker')
         elif qty > 10: 
             return render_template('manual.html', orders = orders, reload=True, error='qty')
-        elif percent_threshold < 0 or percent_threshold > 5: 
+        elif percent_threshold < -5 or percent_threshold > 5: 
             return render_template('ai.html', orders = orders, reload=True, error='percent_threshold')
         else:
             cursor = MYSQL.connection.cursor()
             #INSERT stock information into database
             query = "INSERT INTO CamEliMax_orders (ticker, type, qty, tech_indicator) VALUES (%s, %s, %s, %s)"
             #We want to put tech_ind_used in a text mySQL column
-            queryVars = (ticker, type, 1, tech_ind_used)
+            queryVars = (ticker, type, qty, tech_ind_used)
             cursor.execute(query, queryVars)
             MYSQL.connection.commit()
             return render_template('ai.html', orders = orders, reload=True, error='none')

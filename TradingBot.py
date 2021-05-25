@@ -31,6 +31,22 @@ def get_stock_info(symbol, interval):
     d = [meta, data]
     return d
 
+def get_order(ticker):
+    return API.get_order_by_client_order_id(ticker)
+
+def list_orders(): 
+    # Get the last 100 of our closed orders
+    closed_orders = API.list_orders(
+    status='closed',
+    limit=100,
+    nested=True  # show nested multi-leg orders
+    )
+
+    # Get the closed orders
+    closed_aapl_orders = [o for o in closed_orders]
+    
+    return closed_aapl_orders
+
 def get_tech_indicator(symbol, interval, choice):
     choice = choice.lower()
     #statistic showing if overbought or over sold
@@ -113,28 +129,22 @@ def trade(indicator, symbol, default):
 
     # elif indicator == 'vwap':
 
-def list_orders(): 
-    # Get the last 100 of our closed orders
-    closed_orders = API.list_orders(
-    status='closed',
-    limit=100,
-    nested=True  # show nested multi-leg orders
-    )
 
-    # Get the closed orders
-    closed_aapl_orders = [o for o in closed_orders]
-    
-    return closed_aapl_orders
 
-def get_order(ticker):
-    return API.get_order_by_client_order_id(ticker)
 
-orders = list_orders()
-# # print(z)
-for x in orders:
-  print(x.client_order_id)
-  print(get_order(x.client_order_id))
-print('\n')
+
+
+
+
+
+
+
+# orders = list_orders()
+# # # print(z)
+# for x in orders:
+#   print(x.client_order_id)
+#   print(get_order(x.client_order_id))
+# print('\n')
 
 
 #demo
