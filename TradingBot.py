@@ -1,3 +1,5 @@
+from flask import Flask, render_template, request, redirect, url_for, session
+from flask_mysqldb import MySQL
 from numpy.lib.histograms import _histogram_dispatcher
 from pandas._libs.tslibs import Timestamp
 import requests, json
@@ -8,6 +10,17 @@ from alpha_vantage.techindicators import TechIndicators
 import pandas as pd
 import alpaca_trade_api as tradeapi
 import io
+
+#database access
+app = Flask(__name__)
+app.config['MYSQL_HOST'] = 'mysql.2021.lakeside-cs.org'
+app.config['MYSQL_USER'] = 'student2021'
+app.config['MYSQL_PASSWORD'] = 'm545CS42021'
+app.config['MYSQL_DB'] = '2021project'
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+#secret Key
+app.config['SECRET_KEY'] = 'gshdnfjaebkashgdfhjkageads'
+MYSQL = MySQL(app)
 
 BASE_URL = "https://paper-api.alpaca.markets"
 ACCOUNT_URL = "{}/v2/account".format(BASE_URL)
@@ -95,29 +108,47 @@ def create_order(symbol, qty, type, side, time_in_force):
     r = requests.post(ORDERS_URL, json=data, headers=HEADERS)
     return json.loads(r.content)
 
-def trade(indicator, symbol, default):
+def trade(mysql, indicator, symbol, default, owned, id):
+    #turning comma seperated string to list
+    if not default:
+        info = indicator.split(",") 
+        indicator = info[0]
+        high = info[1]
+        low = info[2]
+
+
     if indicator == 'rsi':
         rsi = get_tech_val(symbol,'daily', 1, 'rsi')
         if default:
             #sell if RSI above 80 (overbought) buy if RSI below 30 (oversold)
-            if rsi >= 70:
-                create_order(symbol,1, 'market', 'sell', 'gtc')
-                print(symbol + ' was overbought we sell 1 share')
+            if rsi >= 80:
+                if owned == True:
+                    print(symbol + ' would be bought but it is already owned')
+                else:
+                    create_order(symbol,1, 'market', 'sell', 'gtc')
+                    print(symbol + ' was overbought we sell 1 share')
             elif rsi <= 30:
-                create_order(symbol, 1, 'market', 'buy', 'gtc')
-                print(symbol + ' was oversold we bought 1 share')
+                if owned == False:
+                    print(symbol + ' would be sold but it is not owned')
+                else:
+                    create_order(symbol, 1, 'market', 'buy', 'gtc')
+                    print(symbol + ' was oversold we bought 1 share')
             else:
                 print(symbol + ' was within range did not buy or sell')
         else:
             #sell if RSI above high (overbought) buy if RSI below low (oversold)
-            high = int(input('What should your overbought RSI value be: '))
-            low = int(input('What should your oversold RSI value be: '))
             if rsi >= high:
-                create_order(symbol,1, 'market', 'sell', 'gtc')
-                print(symbol + ' was overbought we sold 1 share')
+                if owned == True:
+                    print(symbol + ' would be bought but it is already owned')
+                else:
+                    create_order(symbol,1, 'market', 'sell', 'gtc')
+                    print(symbol + ' was overbought we sold 1 share')
             elif rsi <= low:
-                create_order(symbol, 1, 'market', 'buy', 'gtc')
-                print(symbol + ' was oversold we bought 1 share')
+                if owned == False:
+                    print(symbol + ' would be sold but it is not owned')
+                else:
+                    create_order(symbol, 1, 'market', 'buy', 'gtc')
+                    print(symbol + ' was oversold we bought 1 share')
             else:
                 print(symbol + ' was within range did not buy or sell')
     # elif indicator == 'sma':
@@ -129,9 +160,16 @@ def trade(indicator, symbol, default):
 
     # elif indicator == 'vwap':
 
+def loop_through(mysql):
+    cursor = mysql.connection.cursor()
+    query = 'SELECT * FROM CamEliMax_orders'
+    cursor.execute(query)
+    mysql.connection.commit()
+    results = cursor.fetchall()
+    return results
 
 
-
+print(loop_through(MYSQL))
 
 
 

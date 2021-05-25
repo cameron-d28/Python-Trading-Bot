@@ -8,7 +8,7 @@ import alpaca_trade_api as tradeapi
 from alpha_vantage.timeseries import TimeSeries
 from alpha_vantage.techindicators import TechIndicators
 import pandas as pd
-from methods import list_orders, check_ticker, change_in_equity, get_orders
+from methods import list_orders, check_ticker, change_in_equity, get_orders, loop_through
 
 #database access
 app = Flask(__name__)
@@ -97,7 +97,9 @@ def manual():
         qty=int(request.form.get('qty'))
         tech_ind=request.form.get('tech_ind')
         high=request.form.get('high')
+        tech_ind+=','+high
         low=request.form.get('low')
+        tech_ind+=','+low
 
         if check_ticker(ticker) == False:
             return render_template('manual.html', orders = orders, reload=True, error='ticker')
@@ -169,6 +171,11 @@ def test():
     #need to organize orders to input
     return render_template('test.html', orders = orders, reload=True, error='none')
 
+@app.route('/test1', methods=['POST', 'GET'])
+def test1():
+    test = loop_through(MYSQL)
+
+    return render_template('test1.html', test=test)
 
 
         
