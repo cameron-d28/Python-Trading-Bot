@@ -161,6 +161,11 @@ def ai():
             MYSQL.connection.commit()
             return render_template('ai.html', orders = orders, reload=True, error='none')
 
+@app.route("/cycle_mySQL", methods=['POST', 'GET'])
+def cycle_mySQL():
+    done = loop_through(MYSQL)
+    return done
+
 @app.route('/trades', methods=['POST', 'GET'])
 def trade():
     return render_template('trade.html')

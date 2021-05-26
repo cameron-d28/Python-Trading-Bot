@@ -108,7 +108,7 @@ def create_order(symbol, qty, type, side, time_in_force):
     r = requests.post(ORDERS_URL, json=data, headers=HEADERS)
     return json.loads(r.content)
 
-def trade(mysql, indicator, symbol, default, owned, id):
+def trade(indicator, symbol, default, owned):
     #turning comma seperated string to list
     if not default:
         info = indicator.split(",") 
@@ -125,14 +125,16 @@ def trade(mysql, indicator, symbol, default, owned, id):
                 if owned == True:
                     print(symbol + ' would be bought but it is already owned')
                 else:
-                    create_order(symbol,1, 'market', 'sell', 'gtc')
+                    #create_order(symbol,1, 'market', 'sell', 'gtc')
                     print(symbol + ' was overbought we sell 1 share')
+                    owned = False
             elif rsi <= 30:
                 if owned == False:
                     print(symbol + ' would be sold but it is not owned')
                 else:
-                    create_order(symbol, 1, 'market', 'buy', 'gtc')
+                    #create_order(symbol, 1, 'market', 'buy', 'gtc')
                     print(symbol + ' was oversold we bought 1 share')
+                    owned = True
             else:
                 print(symbol + ' was within range did not buy or sell')
         else:
@@ -141,16 +143,19 @@ def trade(mysql, indicator, symbol, default, owned, id):
                 if owned == True:
                     print(symbol + ' would be bought but it is already owned')
                 else:
-                    create_order(symbol,1, 'market', 'sell', 'gtc')
+                    #create_order(symbol,1, 'market', 'sell', 'gtc')
                     print(symbol + ' was overbought we sold 1 share')
+                    owned = False
             elif rsi <= low:
                 if owned == False:
                     print(symbol + ' would be sold but it is not owned')
                 else:
-                    create_order(symbol, 1, 'market', 'buy', 'gtc')
+                    #create_order(symbol, 1, 'market', 'buy', 'gtc')
                     print(symbol + ' was oversold we bought 1 share')
+                    owned = True
             else:
                 print(symbol + ' was within range did not buy or sell')
+    return owned
     # elif indicator == 'sma':
     #     short_sma = get_tech_val(symbol, 'daily', 10, 'sma')
     #     long_sma = get_tech_val(symbol, 'daily' 100, 'sma')

@@ -1,4 +1,10 @@
-function orderStock(){
+function cycle_mySQL(){
+
+	var image = document.getElementById("upward_arrow");
+	image.style.display = 'none';
+	var arrow_header = document.getElementById("arrow_header");
+	arrow_header.innerHTML = 'Working on Trades Now';
+
     //Sets up the AJAX object
     var xhttp = new XMLHttpRequest();
 
@@ -6,8 +12,8 @@ function orderStock(){
 		//if we're actually done successfully
 		if (this.readyState == 4 && this.status == 200) {
 		   //update the text to say the new number of likes
-		   var preset_orders = document.getElementById("preset_orders");
-		   likesSoFar.innerHTML = this.responseText + " likes so far";
+		   	var arrow_header = document.getElementById("arrow_header");
+			arrow_header.innerHTML = 'Trades Complete';
 		   
 		   //this.responseText is a variable which contains the return value
 		   //from Python
@@ -18,7 +24,7 @@ function orderStock(){
 
     //Tells JS which website to go to and
 	//how to go to it (GET or POST)
-	xhttp.open("POST", "/add_order", true);
+	xhttp.open("POST", "/cycle_mySQL", true);
 	
 	//Starts the AJAX request
     xhttp.send(); //asynchronous request
