@@ -200,16 +200,16 @@ def loop_through(mysql):
                 default = False
             filled = trade(x['tech_indicator'], x['ticker'], default, own)
     
-    cursor = mysql.connection.cursor()
-    #change if the order is filled or not
-    if filled:
-        query = "UPDATE CamEliMax_orders SET filled '1' WHERE unique_id=%s"
-    else:
-        query = "UPDATE CamEliMax_orders SET filled '0' WHERE unique_id=%s"
-    unique_id = x['unique_id']
-    queryVars = (unique_id,)
-    cursor.execute(query, queryVars)
-    mysql.connection.commit()
+        cursor = mysql.connection.cursor()
+        #change if the order is filled or not
+        if filled:
+            query = "UPDATE CamEliMax_orders SET filled '1' WHERE unique_id=%s"
+        else:
+            query = "UPDATE CamEliMax_orders SET filled '0' WHERE unique_id=%s"
+        unique_id = x['unique_id']
+        queryVars = (unique_id,)
+        cursor.execute(query, queryVars)
+        mysql.connection.commit()
     
     return results
 
