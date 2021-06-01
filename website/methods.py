@@ -145,6 +145,8 @@ def trade(indicator, symbol, default, owned):
 
 
     if indicator == 'rsi':
+        #need to switch all values to a table and call from the table instead of calling
+        #from API each time
         rsi = get_tech_val(symbol,'daily', 1, 'rsi')
         if default:
             #sell if RSI above 80 (overbought) buy if RSI below 30 (oversold)
@@ -206,7 +208,7 @@ def loop_through(mysql):
                 
         else:
             #checks to see if stock is owned
-            if x['own'] == 0:
+            if x['filled'] == 0:
                 own = False
             else:
                 own = True
@@ -221,9 +223,9 @@ def loop_through(mysql):
         cursor = mysql.connection.cursor()
         #change if the order is filled or not
         if filled:
-            query = "UPDATE CamEliMax_orders SET filled '1' WHERE unique_id=%s"
+            query = "UPDATE CamEliMax_orders SET filled='1' WHERE unique_id=%s"
         else:
-            query = "UPDATE CamEliMax_orders SET filled '0' WHERE unique_id=%s"
+            query = "UPDATE CamEliMax_orders SET filled='0' WHERE unique_id=%s"
         unique_id = x['unique_id']
         queryVars = (unique_id,)
         cursor.execute(query, queryVars)
