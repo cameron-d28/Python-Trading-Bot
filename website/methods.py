@@ -124,14 +124,6 @@ def get_tech_val(symbol, interval, num, choice):
     else:
         return vals
 
-def trade(indicator, symbol, default, owned):
-    #turning comma seperated string to list
-    if not default:
-        info = indicator.split(",") 
-        indicator = info[0]
-        high = info[1]
-        low = info[2]
-
 def create_order(symbol, qty, type, side, time_in_force):
     data = {
         "symbol": symbol,
@@ -142,6 +134,15 @@ def create_order(symbol, qty, type, side, time_in_force):
     }
     r = requests.post(ORDERS_URL, json=data, headers=HEADERS)
     return json.loads(r.content)
+
+def trade(indicator, symbol, default, owned):
+    #turning comma seperated string to list
+    if not default:
+        info = indicator.split(",") 
+        indicator = info[0]
+        high = info[1]
+        low = info[2]
+
 
     if indicator == 'rsi':
         rsi = get_tech_val(symbol,'daily', 1, 'rsi')
