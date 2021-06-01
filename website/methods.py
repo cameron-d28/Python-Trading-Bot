@@ -224,6 +224,12 @@ def loop_through(mysql):
     
     return results
 
+def get_list(tech_ind):
+    s = tech_ind.split(",")
+    s.pop()
+    return s
+    
+
 
 
 # for index, row in df.iterrows():

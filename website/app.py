@@ -8,7 +8,7 @@ import alpaca_trade_api as tradeapi
 from alpha_vantage.timeseries import TimeSeries
 from alpha_vantage.techindicators import TechIndicators
 import pandas as pd
-from methods import list_orders, check_ticker, change_in_equity, get_orders, loop_through
+from methods import list_orders, check_ticker, change_in_equity, get_orders, loop_through, get_list
 
 #database access
 app = Flask(__name__)
@@ -123,21 +123,21 @@ def ai():
     else:
         tech_ind_used=""
         if str(request.form.get('rsi'))=='on':
-            tech_ind_used+='rsi, '
+            tech_ind_used+='RSI, '
         if str(request.form.get('vol'))=='on':
-            tech_ind_used+='vol, '
-        if str(request.form.get('stoch_osc'))=='on':
-            tech_ind_used+='stoch_osc, '
+            tech_ind_used+='VOL, '
+        if str(request.form.get('stoch'))=='on':
+            tech_ind_used+='STOCH, '
         if str(request.form.get('sma'))=='on':
-            tech_ind_used+='sma, '
-        if str(request.form.get('on_balance_vol'))=='on':
-            tech_ind_used+='on_balance_vol, '
-        if str(request.form.get('moving_avg_con'))=='on':
+            tech_ind_used+='SMA, '
+        if str(request.form.get('obv'))=='on':
+            tech_ind_used+='OBV, '
+        if str(request.form.get('macd'))=='on':
             tech_ind_used+='MACD, '
-        if str(request.form.get('bol_bands'))=='on':
-            tech_ind_used+='bol_bands, '
-        if str(request.form.get('avg_dir_movement'))=='on':
-            tech_ind_used+='avg_dir_movement, '
+        if str(request.form.get('bbands'))=='on':
+            tech_ind_used+='BBANDS, '
+        if str(request.form.get('adx'))=='on':
+            tech_ind_used+='ADX, '
         
         ticker=request.form.get('ticker')
         type=request.form.get('type')
