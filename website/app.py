@@ -189,6 +189,11 @@ def cycle_mySQL():
     done = loop_through(MYSQL)
     return done
 
+@app.route("/test_AJAX", methods=['POST', 'GET'])
+def test_AJAX():
+    done = change_in_equity()
+    return done
+
 @app.route('/trades', methods=['POST', 'GET'])
 def trade():
     return render_template('trade.html')

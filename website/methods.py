@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mysqldb import MySQL
 import requests, json
-from alpha_vantage.timeseries import TimeSeries
 import sys
 from config import *
 import alpaca_trade_api as tradeapi
@@ -10,6 +9,7 @@ from alpha_vantage.techindicators import TechIndicators
 import pandas as pd
 import yfinance as yf
 import numpy as np
+import time
 
 BASE_URL = "https://paper-api.alpaca.markets"
 ACCOUNT_URL = "{}/v2/account".format(BASE_URL)
@@ -94,19 +94,36 @@ def get_tech_indicator(symbol, interval, choice):
         data, meta = ti.get_rsi(symbol, interval, 20, 'close')
         d = [meta, data]
         return d
-    #ti showing the moving average
-    elif choice == 'sma':
-        data, meta = ti.get_sma(symbol, interval, 20, 'close')
-        d = [meta, data]
-        return d
     #ti showing the exponential average
-    elif choice == 'ema':
-        data, meta = ti.get_ema(symbol, interval, 20, 'close')
+    elif choice == 'stoch':
+        data, meta = ti.get_stoch(symbol, interval)
         d = [meta, data]
         return d
     #ti showing the volume weighted average
     elif choice == 'vwap':
         data, meta = ti.get_vwap(symbol, interval, 20, 'close')
+        d = [meta, data]
+        return d
+    #ti showing the on balance volume
+    elif choice == 'obv':
+        data, meta = ti.get_obv(symbol, interval)
+        d = [meta, data]
+        return d
+    #ti showing the moving average convergence/divergence
+    elif choice == 'macd':
+        data, meta = ti.get_macd(symbol, interval)
+        d = [meta, data]
+        return d
+
+     #ti showing the bollinger bands
+    elif choice == 'bbands':
+        data, meta = ti.get_bbands(symbol, interval, 20, 'close')
+        d = [meta, data]
+        return d
+    
+     #ti showing the moving average convergence/divergence
+    elif choice == 'adx':
+        data, meta = ti.get_a(symbol, interval, 20)
         d = [meta, data]
         return d
 
@@ -184,7 +201,52 @@ def trade(indicator, symbol, default, owned):
                     owned = True
             else:
                 print(symbol + ' was within range did not buy or sell')
+
+    elif indicator == 'bbands':
+        #need to switch all values to a table and call from the table instead of calling
+        #from API each time
+        bbands = get_tech_val(symbol,'daily', 1, 'bbands')
+        if default:
+            #sell if RSI above 80 (overbought) buy if RSI below 30 (oversold)
+            if bbands >= 80:
+                if owned == True:
+                    print(symbol + ' would be bought but it is already owned')
+                else:
+                    #create_order(symbol,1, 'market', 'sell', 'gtc')
+                    print(symbol + ' was overbought we sell 1 share')
+                    owned = False
+            elif bbands <= 30:
+                if owned == False:
+                    print(symbol + ' would be sold but it is not owned')
+                else:
+                    #create_order(symbol, 1, 'market', 'buy', 'gtc')
+                    print(symbol + ' was oversold we bought 1 share')
+                    owned = True
+            else:
+                print(symbol + ' was within range did not buy or sell')
+        else:
+            #sell if RSI above high (overbought) buy if RSI below low (oversold)
+            if bbands >= high:
+                if owned == True:
+                    print(symbol + ' would be bought but it is already owned')
+                else:
+                    #create_order(symbol,1, 'market', 'sell', 'gtc')
+                    print(symbol + ' was overbought we sold 1 share')
+                    owned = False
+            elif bbands <= low:
+                if owned == False:
+                    print(symbol + ' would be sold but it is not owned')
+                else:
+                    #create_order(symbol, 1, 'market', 'buy', 'gtc')
+                    print(symbol + ' was oversold we bought 1 share')
+                    owned = True
+            else:
+                print(symbol + ' was within range did not buy or sell')
+    
+
+
     return owned
+    
 
 def loop_through(mysql):
     cursor = mysql.connection.cursor()
@@ -219,6 +281,7 @@ def loop_through(mysql):
             else:
                 default = False
             filled = trade(x['tech_indicator'], x['ticker'], default, own)
+            time.sleep(15)
     
         cursor = mysql.connection.cursor()
         #change if the order is filled or not
