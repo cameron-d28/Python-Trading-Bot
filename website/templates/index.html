@@ -4,15 +4,28 @@
 {% endblock %}
 
 {% block body %}
-<div class="container">
+<div>
   <div class="jumbotron">
-    <h1 class="text-center">Welcome to the Stock Bot</h1>
-    <p class="text-center">Create your personal and customized trading bot today!</p>
+    <h1 class="text-center">You've Arrived at the Stock Bot</h1>
+    <p class="text-center">A program able to purchase and sell stocks based on specific indicators without constant human monitoring</p>
   </div>
 </div>
-<div class="text-center">
-  <img src="https://cdni.rt.com/files/2021.01/xxl/6016b93285f54046e775c25b.JPG" class="img-circle" width=600 height=400</img>
-  <h2>Wall Street awaits you...</h2>
+
+<div">
+  <div class="text-center">
+    <img src="https://cdni.rt.com/files/2021.01/xxl/6016b93285f54046e775c25b.JPG" class="img-circle" width=600 height=400</img>
+  </div>
+  <div class="small-spacer"></div>
 </div>
+
+<div class="text-center">
+  <form>
+    <button class="btn" type="submit" formaction="summary">View Holdings & Progress</button>
+    <button class="btn" type="submit" formaction="home">Access the Bot</button>
+  </form>
+</div>
+
+
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
 {% endblock %}

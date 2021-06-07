@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block head %}
+<title>Summary of Holdings</title>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="text-center"> Summary of Holdings</h1>
+</div>
+
+
+<table  class=>
+<thead>
+    <tr>
+    <th scope="col"> Stock Ticker </th>
+    <th scope="col"> Cost </th>
+    <th scope="col"> Purchase Date </th>
+    </tr>
+</thead>
+<tbody>
+    {% for x in orders %}
+    <tr style="height: 10px;">
+    <td>{{x['symbol']}}</td>
+    <td>{{x['filled_avg_price']}}</td>
+    <td>{{x['filled_at']}}</td>
+    </tr>
+    {% endfor %}
+
+</tbody>
+</table>
+
+{% endblock %}

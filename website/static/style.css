@@ -6,3 +6,17 @@
     left:0;
     z-index: 1;
 }
+
+.small-spacer{
+    height: 50px;
+  }
+
+.large-spacer{
+    height: 200px;
+  }
+
+.container {
+    width: auto;
+    height: 504px;
+    overflow: hidden;
+}

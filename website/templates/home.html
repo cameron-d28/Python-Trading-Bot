@@ -6,11 +6,7 @@
 {% block body %}
 
 <style type="text/css">
-.container {
-  width: auto;
-  height: 504px;
-  overflow: hidden;
-}
+
 
 .jumbotron{
   /* url('../../website/static/brain.jpg') https://clipartart.com/images/brain-emoji-clipart-11.jpg  */
@@ -37,9 +33,7 @@
   width: 100px;
 }
 
-.spacer{
-  height: 200px;
-}
+
 </style>
 <div class=container>
   <div class = "jumbotron">
@@ -55,7 +49,7 @@
   <div class="row">
     <div>
       <h2 class="text-center">{{change}}</h2>
-      <h4 class="text-center"><a href="https://app.alpaca.markets/login">Go to Alpaca dashboard</a></h4>
+      <h4 class="text-center"><a target="_blank" href="https://app.alpaca.markets/login">Go to Alpaca dashboard</a></h4>
     </div>
     <div class="col-sm-4">
       <h3>Preset Values</h3>
@@ -80,7 +74,7 @@
       </form>
     </div>
   </div>
-  <div class="spacer"></div>
+  <div class="large-spacer"></div>
 </div>
 <div>
   <header>
