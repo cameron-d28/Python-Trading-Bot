@@ -197,8 +197,15 @@ def loop_through(mysql):
         #to keep track of each order
         count = 0
         if x['type'] == 'ai':
-            #Bot code required here
-            print('placeholder')
+            #get list of indicators from mysql
+            #get unique_id from mysql
+            #run through function to get list of indicators
+            #get new data using list of indicators
+            #get algorithm from second mysql using unique_id
+            #run new data through algorithm
+            #buy or sell given result
+            cur = mysql.connection.cursor()
+                
         else:
             #checks to see if stock is owned
             if x['filled'] == 0:
