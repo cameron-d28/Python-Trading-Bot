@@ -10,6 +10,11 @@ from alpha_vantage.techindicators import TechIndicators
 import pandas as pd
 import yfinance as yf
 import numpy as np
+import pickle
+import time
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.model_selection import train_test_split
 
 BASE_URL = "https://paper-api.alpaca.markets"
 ACCOUNT_URL = "{}/v2/account".format(BASE_URL)
@@ -198,14 +203,36 @@ def loop_through(mysql):
         count = 0
         if x['type'] == 'ai':
             #get list of indicators from mysql
+            indicators=x['tech_indicator']
             #get unique_id from mysql
+            unique_id=x['unique_id']
             #run through function to get list of indicators
+            indicators=get_list(indicators)
             #get new data using list of indicators
+            ticker=x['ticker']
+            newData=get_new_data(ticker,indicators)
             #get algorithm from second mysql using unique_id
-            #run new data through algorithm
-            #buy or sell given result
             cur = mysql.connection.cursor()
-                
+            query = "SELECT algorithm from CamEliMax_ML where unique_id=%s;"
+            queryVars=(unique_id)
+            cur.execute(query,queryVars)
+            mysql.connection.commit()
+            filename = cur.fetchall()
+
+            infile=open(filename,'rb')
+            algorithm=pickle.load(infile)
+            #run new data through algorithm
+            newData=sc.transform(newData)
+            result=algorithm.predict(newData)
+            #buy or sell given result
+            if result==1:
+                if x['filled']==0:
+                    create_order(ticker, 1, 'market', 'buy', 'gtc')
+            elif result==0:
+                if x['filled']==1:
+                    create_order(ticker, 1, 'market', 'sell', 'gtc')
+
+
         else:
             #checks to see if stock is owned
             if x['filled'] == 0:
@@ -238,8 +265,218 @@ def get_list(tech_ind):
     s.pop()
     return s
     
+def get_new_data(ticker, indicators):
+    toTest=np.array([])
+    outputsize='i'
+    interval='i'
+    timePeriod='i'
+    seriesType='i'
+    for x in indicators:
+        time.sleep(15)
+        if x=="MACD":
+            outputsize='i'
+            interval='daily'
+            timePeriod='i'
+            seriesType='close'
+        if x=="RSI":
+            outputsize='i'
+            interval='daily'
+            timePeriod='50'
+            seriesType='close'
+        if x=="SMA":
+            outputsize='i'
+            interval='daily'
+            timePeriod='50'
+            seriesType='close'
+        if x=="STOCH":
+            outputsize='i'
+            interval='daily'
+            timePeriod='i'
+            seriesType='i'
+        if x=="OBV":
+            outputsize='i'
+            interval='daily'
+            timePeriod='i'
+            seriesType='i'
+        if x=="ADX":
+            outputsize='i'
+            interval='daily'
+            timePeriod='50'
+            seriesType='i'
+        if x=="BBANDS":
+            outputsize='i'
+            interval='daily'
+            timePeriod='50'
+            seriesType='close'
+
+        data=get_stock_info(x,ticker, outputsize,interval,timePeriod,seriesType)
+        data=data["Technical Analysis: "+x]
+        ii=0
+        toReturn=0
+        if (x=="RSI" or x=="SMA"):
+            for day in data:
+                if ii==3:
+                    break
+                num=data[day][x]
+                toReturn=toReturn+float(num)
+                ii=ii+1
+            
+            toReturn=toReturn/3
+        else:
+            for day in data:
+                if ii==1:
+                    break
+                if x=="STOCH":
+                    toReturn=data[day]["SlowD"]
+                if x=="BBANDS":
+                    toReturn=float(data[day]["Real Upper Band"])-float(data[day]["Real Middle Band"])
+                else:
+                    toReturn=data[day][x]
+                ii=ii+1
+
+        toTest=np.append(toTest,np.array(toReturn))
+    toTest=toTest.astype(np.float)
+    toTest=[toTest.tolist()]
+    
+def create_algorithm(ticker,indicators,threshold,unique_id,mysql):
+    ii=0
+    for x in indicators:
+        time.sleep(15)
+        if x=="MACD":
+            outputsize='i'
+            interval='daily'
+            timePeriod='i'
+            seriesType='close'
+        if x=="RSI":
+            outputsize='i'
+            interval='daily'
+            timePeriod='50'
+            seriesType='close'
+        if x=="SMA":
+            outputsize='i'
+            interval='daily'
+            timePeriod='50'
+            seriesType='close'
+        if x=="STOCH":
+            outputsize='i'
+            interval='daily'
+            timePeriod='i'
+            seriesType='i'
+        if x=="OBV":
+            outputsize='i'
+            interval='daily'
+            timePeriod='i'
+            seriesType='i'
+        if x=="ADX":
+            outputsize='i'
+            interval='daily'
+            timePeriod='50'
+            seriesType='i'
+        if x=="BBANDS":
+            outputsize='i'
+            interval='daily'
+            timePeriod='50'
+            seriesType='close'
+
+        data=get_stock_info(x,ticker, outputsize,interval,timePeriod,seriesType)
+        data=data["Technical Analysis: "+x]
+
+        dataValues=np.array([])
+
+        if (x=="RSI" or x=="SMA"):
+            for day in data:
+                dataValues=np.append(dataValues,np.array([data[day][x]]))
+            
+            dataValues=dataValues.astype(np.float)
+            dataValues=getAverageValue(dataValues,3)
+        
+        else:
+            if x=="STOCH":
+                for day in data:
+                    dataValues=np.append(dataValues,np.array([data[day]['SlowD']]))
+            if x=="BBANDS":
+                for day in data:
+                    dataValues=np.append(dataValues,np.array([float(data[day]["Real Upper Band"])-float(data[day]["Real Middle Band"])]))
+            else:
+                for day in data:
+                    dataValues=np.append(dataValues,np.array([data[day][x]]))
+
+            dataValues=dataValues.astype(np.float)
+            dataValues=np.delete(dataValues,[0])
+
+        if ii==0:
+            stocks=pd.DataFrame(dataValues,columns=[x])
+        else:
+            dataValues=pd.Series(dataValues)
+            stocks.insert(loc=ii,column=x,value=dataValues)
+        ii=ii+1
+    
+    pChangeResponse=get_stock_info('TIME_SERIES_DAILY_ADJUSTED',ticker,'full','i','i','i')
+    pChangeResponse=pChangeResponse["Time Series (Daily)"]
+    closeValues=np.array([])
+    aa=0
+    while aa<(len(dataValues)):
+        for day in pChangeResponse:
+            closeValues=np.append(closeValues,np.array([pChangeResponse[day]["5. adjusted close"]]))
+            ii=ii+1
+    closeValues=closeValues.astype(np.float)
+    changes=np.diff(closeValues)
+    closeValues=np.delete(closeValues, [0])
+    changesP=np.divide(changes,closeValues)*(-100)
+    changesP=pd.Series(changesP)
+    stocks.insert(loc=ii,column="pChange",value=changesP)
+
+    stocks=stocks.dropna()
+    min=stocks['pChange'].min()
+    max=stocks['pChange'].max()
+    bins=[min,-1,threshold, max]
+    group_names=['bad','nothing','good']
+    stocks['pChange']=pd.cut(stocks['pChange'], bins=bins, labels=group_names)
+
+    label_quality=LabelEncoder()
+    stocks['pChange']=label_quality.fit_transform(stocks['pChange'])
+
+    X=stocks.drop(['pChange'], axis=1)
+    y=stocks['pChange']
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state= 42)
+
+    sc = StandardScaler()
+    X_train = sc.fit_transform(X_train)
+    X_test = sc.transform(X_test)
+
+    rfc = RandomForestClassifier(n_estimators=500)
+    rfc.fit(X_train, y_train)
+
+    #PICKLE
+    filename=ticker+str(unique_id)
+    outfile=open(filename,'wb')
+    pickle.dump(rfc,outfile)
+    outfile.close()
+
+    cur = mysql.connection.cursor()
+    query = "INSERT INTO CamEliMax_ML(ticker,algorithm,unique_id) VALUES (%s,%s,%s);"
+    queryVars=(ticker,filename,unique_id)
+    cur.execute(query,queryVars)
+    mysql.connection.commit()
 
 
+def getAverageValue(values,days):
+    ii=0
+    toReturn=np.array([])
+    while ii<(len(values)-days):
+        toAdd=0
+        for x in range (days):
+            toAdd=toAdd+values[ii+(x+1)]
+        toAdd=toAdd/days
+        toReturn=np.append(toReturn,np.array([toAdd]))
+        ii=ii+1
+    return toReturn
+
+
+
+
+        
 
 # for index, row in df.iterrows():
 #     print(check_ticker(row['Symbol']))

@@ -8,7 +8,7 @@ import alpaca_trade_api as tradeapi
 from alpha_vantage.timeseries import TimeSeries
 from alpha_vantage.techindicators import TechIndicators
 import pandas as pd
-from methods import list_orders, check_ticker, change_in_equity, get_orders, loop_through, get_list
+from methods import list_orders, check_ticker, change_in_equity, get_orders, loop_through, get_list,create_algorithm
 
 #database access
 app = Flask(__name__)
@@ -122,14 +122,8 @@ def ai():
         return render_template('ai.html', orders = orders)
     else:
         tech_ind_used=""
-        if str(request.form.get('rsi'))=='on':
-            tech_ind_used+='RSI, '
-        if str(request.form.get('vol'))=='on':
-            tech_ind_used+='VOL, '
         if str(request.form.get('stoch'))=='on':
             tech_ind_used+='STOCH, '
-        if str(request.form.get('sma'))=='on':
-            tech_ind_used+='SMA, '
         if str(request.form.get('obv'))=='on':
             tech_ind_used+='OBV, '
         if str(request.form.get('macd'))=='on':
@@ -138,6 +132,10 @@ def ai():
             tech_ind_used+='BBANDS, '
         if str(request.form.get('adx'))=='on':
             tech_ind_used+='ADX, '
+        if str(request.form.get('rsi'))=='on':
+            tech_ind_used+='RSI, '
+        if str(request.form.get('sma'))=='on':
+            tech_ind_used+='SMA, '
         
         ticker=request.form.get('ticker')
         type=request.form.get('type')
@@ -159,6 +157,19 @@ def ai():
             queryVars = (ticker, type, qty, tech_ind_used)
             cursor.execute(query, queryVars)
             MYSQL.connection.commit()
+            query2 = "SELECT tech_indicator, from CamEliMax_orders WHERE unique_id=(SELECT MAX(unique_id) FROM CamEliMax_orders);"
+            cursor.execute(query2)
+            MYSQL.connection.commit()
+            tech_indicators = cursor.fetchall()
+            tech_indicators= list(tech_indicators)[0]['tech_indicator']
+            tech_indicators=get_list(tech_indicators)
+            query3 = "SELECT unique_id from CamEliMax_orders WHERE unique_id=(SELECT MAX(unique_id) FROM CamEliMax_orders);"
+            cursor.execute(query3)
+            MYSQL.connection.commit()
+            unique_id = cursor.fetchall()
+            unique_id= list(unique_id)[0]['unique_id']
+            create_algorithm(ticker,tech_indicators,percent_threshold,unique_id,MYSQL)
+
             return render_template('ai.html', orders = orders, reload=True, error='none')
 
 @app.route("/cycle_mySQL", methods=['POST', 'GET'])
